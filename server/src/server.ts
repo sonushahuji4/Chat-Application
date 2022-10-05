@@ -1,10 +1,18 @@
 import express, { Application } from "express";
-import http, { Server } from "http";
+import http from "http";
 import morgan from "morgan";
 import cors from "cors";
 import * as dotenv from "dotenv";
+import { Server } from  "socket.io";
 import { WebSocket }  from "./web-socket/websocket";
 
+
+interface authorData {
+    author : string;
+    chatRoom  : string;
+    message : string;
+    time : any;
+}
 dotenv.config();
 
 const app: Application = express();
@@ -16,10 +24,17 @@ app.use(cors);
 app.use(morgan("dev"));
 
 /** creating a server */
-const server: Server = http.createServer(app);
+const server = http.createServer(app);
 
-const socketIO: WebSocket = WebSocket.getInstance(server);
-socketIO.on("connection",(socket) => {
+const io = new Server(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+    },
+  });
+  io.on("connection",(socket) => {
+
+// const socketIO: WebSocket = WebSocket.getInstance(server);
     console.log(`User connected: ${socket.id}`);
 
     /** Request from user to join chat */
@@ -29,8 +44,9 @@ socketIO.on("connection",(socket) => {
     });
 
     /** Send and Receive message request for chat */
-    socket.on("send", (data) => {
-        socket.to(data.room).emit("receive", data);
+    socket.on("send", (data: authorData) => {
+        console.log("Received User data from client :", data);
+        socket.to(data.chatRoom).emit("accept_request_from_server", data);
     });
 
     /** Request to leave the chat */

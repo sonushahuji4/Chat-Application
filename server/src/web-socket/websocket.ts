@@ -1,8 +1,9 @@
 
 import { Server } from "socket.io";
+import * as dotenv from "dotenv";
 
 const WEBSOCKET_CORS = {
-    origin: "http:localhost:3000/", /** Establish connect to client Brower with this Endpoint */
+    origin: `http:localhost:${process.env.CLIENT_PORT}/`, /** Establish connect to client Brower with this Endpoint */
     methods: ["GET","POST"] /** Only accept these two methods */
 }
 
