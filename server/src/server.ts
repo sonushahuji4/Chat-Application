@@ -28,7 +28,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: "http://localhost:3000/",
       methods: ["GET", "POST"],
     },
   });
@@ -44,7 +44,7 @@ const io = new Server(server, {
     });
 
     /** Send and Receive message request for chat */
-    socket.on("send", (data: authorData) => {
+    socket.on("send_request_to_server_from_client", (data: authorData) => {
         console.log("Received User data from client :", data);
         socket.to(data.chatRoom).emit("accept_request_from_server", data);
     });
@@ -58,5 +58,5 @@ const io = new Server(server, {
 
 /** server listening on port  */
 server.listen(process.env.SERVER_PORT, () => {
-    console.log(`Server started on port : ${process.env.SERVER_PORT}`);
+    console.log(`Server started on : ${process.env.SERVER_PORT}`);
 });
